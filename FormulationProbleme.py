@@ -92,10 +92,10 @@ class FormulationProbleme():
         
         positions_clients = {1:(0,0)}
 
-        for i in range(1, C+2):
+        for i in range(1, C+1):
             x = random.randint(plage_x[0], plage_x[1])
             y = random.randint(plage_y[0], plage_y[1])
-            positions_clients[i] = (x, y)
+            positions_clients[i+1] = (x, y)
 
         # Liste de couleurs pour trajets des véhicules
         colors = ['blue','red' ,'green']
@@ -123,7 +123,7 @@ class FormulationProbleme():
             if valeur > 0.5:
                 edge = [(i, j)]
                 edge_labels = {(i, j): str(demande[j-2])}
-                nx.draw_networkx_edges(G, pos, edgelist=edge, connectionstyle=f"arc3,rad=0.1", arrows=True, width=2.0, edge_color=colors[k-1], alpha=1)
+                nx.draw_networkx_edges(G, pos, edgelist=edge, connectionstyle=f"arc3,rad=0.1", arrows=True, width=2.0, edge_color=colors[(k-1) % len(colors)], alpha=1)
                 if j != 1:
                     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', alpha=0.7, bbox=dict(facecolor='none', edgecolor='none'))
 
