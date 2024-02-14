@@ -1,11 +1,12 @@
 from typing import List
+import random
 import networkx as nx
 import matplotlib.pyplot as plt
 from docplex.mp.model import Model 
 
  # Données
 class FormulationProbleme():
-    def calcul(self, d: int, c: int, v: int, qMax: int, demandes, distij):  
+    def calcul(self, d: int, c: int, v: int, qMax: int, demandes, distij) -> bool:  
         D = int(d)
         C = int(c)
         V = int(v)
@@ -66,7 +67,8 @@ class FormulationProbleme():
             model.add_constraint(nbre == model.sum(Qaprestour[k] <= Qmax - 1 for k in vehicles))
 
         # Résolution du modèle
-        model.solve()
+        if not (model.solve()):
+            return False
 
         # Affichage des résultats
         print('Valeur optimale :', model.objective_value)
@@ -83,20 +85,18 @@ class FormulationProbleme():
         # Définir la taille de la figure
         plt.figure(figsize=(15, 8))
 
+
         # Positions des clients
-        positions_clients = {
-            1: (0,0),
-            2: (-15, 6),
-            3: (10, -1),
-            4: (-4, 6),
-            5: (2, -11),
-            6: (10, 6),
-            7: (8, -5),
-            8: (-10, -10),
-            9: (18, 2),
-            10: (18, 6),
-            11: (-20, 4)
-        }
+        plage_x = (-20, 18)
+        plage_y = (-10, 10)
+        
+        positions_clients = {1:(0,0)}
+
+        for i in range(1, C+2):
+            x = random.randint(plage_x[0], plage_x[1])
+            y = random.randint(plage_y[0], plage_y[1])
+            positions_clients[i] = (x, y)
+
         # Liste de couleurs pour trajets des véhicules
         colors = ['blue','red' ,'green']
 
@@ -112,8 +112,11 @@ class FormulationProbleme():
         # Tracé du graphe
         pos = nx.get_node_attributes(G, 'pos')
 
+        # Tailles des nœuds
+        node_sizes = {node: 800 if node == 1 else 500 for node in G.nodes}
+
         # Nœuds
-        nx.draw_networkx_nodes(G, pos, node_size=500, node_color='lightblue')
+        nx.draw_networkx_nodes(G, pos, node_size=[node_sizes[node] for node in G.nodes], node_color='lightblue')
 
         # Arcs avec flèches
         for (i, j, k), valeur in solution_x.items():
@@ -125,7 +128,8 @@ class FormulationProbleme():
                     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', alpha=0.7, bbox=dict(facecolor='none', edgecolor='none'))
 
         # Étiquettes des nœuds (numéro du client)
-        node_labels = {node: str(node) for node in G.nodes}
+        # Ajout des étiquettes pour les nœuds
+        node_labels = {node: "Dépôt" if node == 1 else str(node) for node in G.nodes}
         nx.draw_networkx_labels(G, pos, labels=node_labels)
 
         # Valeur de la solution optimale avec une décimale
@@ -136,3 +140,5 @@ class FormulationProbleme():
         plt.legend([f'Solution optimale : {optimal_value}'], bbox_to_anchor=(0.1, 0.5), fancybox=True, shadow=True)
         plt.axis('off')
         plt.show()
+
+        return True
