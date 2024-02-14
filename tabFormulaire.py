@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+from FormulationProbleme import FormulationProbleme
+
 class TabFormulaire(ttk.Frame):
 
     @staticmethod
@@ -63,18 +65,9 @@ class TabFormulaire(ttk.Frame):
                 self.is_decimal(capacite_max_vehicule)):
             messagebox.showerror("Erreur", "Veuillez saisir des valeurs numériques.")
             return
+        
+        # Instanciation de l'objet FormulationProbleme
+        formulation_probleme = FormulationProbleme()
+        formulation_probleme.calcul(nombre_depots,nombre_clients,nombre_vehicules,capacite_max_vehicule,demande_clients,matrice_distances)
 
-        # Création du contenu du fichier texte
-        contenu = f"C = {nombre_clients};\n"
-        contenu += f"V = {nombre_vehicules};\n"
-        contenu += f"D = {nombre_depots};\n"
-        contenu += f"Qmax = {capacite_max_vehicule};\n"
-        contenu += f"demende = {demande_clients};\n"
-        contenu += "Distij =\n"
-        contenu += matrice_distances + ";"
-
-        # Écriture du contenu dans un fichier texte
-        with open("donnees_formulaire.txt", "w") as f:
-            f.write(contenu)
-
-        messagebox.showinfo("Succès", "Les données ont été enregistrées dans le fichier 'donnees_formulaire.txt'.")
+      
