@@ -68,8 +68,12 @@ class TabFormulaire(ttk.Frame):
         
         # Instanciation de l'objet FormulationProbleme
         formulation_probleme = FormulationProbleme()
-        if not (formulation_probleme.calcul(nombre_depots,nombre_clients,nombre_vehicules,capacite_max_vehicule,demande_clients,matrice_distances)) :
-            messagebox.showerror("Erreur", "Résolution impossible !")
+        try:
+            if not (formulation_probleme.calcul(nombre_depots, nombre_clients, nombre_vehicules, capacite_max_vehicule, demande_clients, matrice_distances)):
+                messagebox.showerror("Erreur", "Résolution impossible !")
+        except Exception as exc:
+            error_message = str(exc)
+            messagebox.showerror("dépassement variable/constante version essai", f"Une erreur s'est produite : {error_message}")
 
 
       
